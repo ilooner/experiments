@@ -2,12 +2,7 @@ package com.tim.experiment;
 
 import java.util.List;
 
-public class CrawlParser
+public interface CrawlParser
 {
-  public CrawlParser() {
-  }
-
-  public List<String> parse(String page) {
-    return null;
-  }
+  List<String> parse(String page);
 }
