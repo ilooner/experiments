@@ -56,10 +56,10 @@ public class Crawl implements Runnable
 
       if (destList == null) {
         destList = Collections.synchronizedList(new ArrayList<>());
+        firstDegreeTable.put(src, destList);
       }
 
       destList.add(dest);
-      firstDegreeTable.put(src, destList);
 
       // There is a chance that two workers will encounter the same destination twice. In this case the same
       // destination will be added to the queue twice and the work will be duplicated. We are okay with that
