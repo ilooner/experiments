@@ -71,7 +71,28 @@ public class CrawlSystem
   public static List<List<String>> shortestConnection(Map<String, List<String>> firstDegreeTable,
                                                       String src,
                                                       String dest) {
+    final List<List<String>> results = new ArrayList<>();
+    List<String> nextSteps = firstDegreeTable.get(src);
 
-    return null;
+    if (nextSteps.contains(dest)) {
+      List<String> path = new ArrayList<>();
+      path.add(src);
+      path.add(dest);
+
+      results.add(path);
+    } else {
+      final List<List<String>> tempResults = new ArrayList<>();
+
+      for (String nextStep: nextSteps) {
+        tempResults.addAll(shortestConnection(firstDegreeTable, nextStep, dest));
+      }
+
+      for (List<String> connection: tempResults) {
+        // TODO inefficient
+        connection.add(0, src);
+      }
+    }
+
+    return results;
   }
 }
