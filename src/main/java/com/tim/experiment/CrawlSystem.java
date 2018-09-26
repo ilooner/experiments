@@ -21,7 +21,7 @@ public class CrawlSystem
 
   private List<Crawl> crawlers = new ArrayList<>();
   private Queue<String> urlQueue = new ConcurrentLinkedQueue<>();
-  private Map<String, String> firstDegreeTable = new ConcurrentHashMap<>();
+  private Map<String, List<String>> firstDegreeTable = new ConcurrentHashMap<>();
   private ExecutorService workerPool = Executors.newFixedThreadPool(numCrawlers);
 
   public CrawlSystem(final CrawlFetcher fetcher, final CrawlParser parser) {
@@ -52,7 +52,26 @@ public class CrawlSystem
     workerPool.awaitTermination(1, TimeUnit.MINUTES);
   }
 
-  public List<List<String>> getShortestConnections(String page1, String page2) {
+  public List<List<String>> getShortestConnections(String page1,
+                                                   String page2) {
+    return getShortestConnections(firstDegreeTable, page1, page2);
+  }
+
+  public static List<List<String>> getShortestConnections(Map<String, List<String>> firstDegreeTable,
+                                                          String page1,
+                                                          String page2) {
+    List<List<String>> connections1To2 = shortestConnection(firstDegreeTable, page1, page2);
+    List<List<String>> connections2To1 = shortestConnection(firstDegreeTable, page2, page1);
+
+    // Get all the connections
+    connections1To2.addAll(connections2To1);
+    return connections1To2;
+  }
+
+  public static List<List<String>> shortestConnection(Map<String, List<String>> firstDegreeTable,
+                                                      String src,
+                                                      String dest) {
+
     return null;
   }
 }

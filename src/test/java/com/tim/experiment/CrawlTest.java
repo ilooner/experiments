@@ -15,7 +15,7 @@ public class CrawlTest
   @Test
   public void simpleCrawlLogicTest() {
     final Queue<String> urlQueue = new ConcurrentLinkedQueue<>();
-    final Map<String, String> firstDegreeTable = new ConcurrentHashMap<>();
+    final Map<String, List<String>> firstDegreeTable = new ConcurrentHashMap<>();
 
     urlQueue.add("page");
     final Crawl crawl = new Crawl(urlQueue, firstDegreeTable, new MockFetcher(), new MockParser());
@@ -29,9 +29,12 @@ public class CrawlTest
     final List<String> actualQueue = new ArrayList<>();
     actualQueue.addAll(urlQueue);
 
-    final Map<String, String> expectedTable = new HashMap<>();
-    expectedTable.put("page", "aaa");
-    expectedTable.put("page", "bbb");
+    final Map<String, List<String>> expectedTable = new HashMap<>();
+    final List<String> pageVals = new ArrayList<>();
+    pageVals.add("aaa");
+    pageVals.add("bbb");
+
+    expectedTable.put("page", pageVals);
 
     Assert.assertEquals(expectedQueue, actualQueue);
     Assert.assertEquals(expectedTable, firstDegreeTable);

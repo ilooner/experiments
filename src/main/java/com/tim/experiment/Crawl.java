@@ -1,20 +1,23 @@
 package com.tim.experiment;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Crawl implements Runnable
 {
   private final Queue<String> urlQueue;
-  private final Map<String, String> firstDegreeTable;
+  private final Map<String, List<String>> firstDegreeTable;
   private volatile boolean terminate = false;
 
   private final CrawlFetcher fetcher;
   private final CrawlParser parser;
 
   public Crawl(final Queue<String> urlQueue,
-               final Map<String, String> firstDegreeTable,
+               final Map<String, List<String>> firstDegreeTable,
                final CrawlFetcher fetcher,
                final CrawlParser parser) {
     this.urlQueue = urlQueue;
@@ -49,7 +52,14 @@ public class Crawl implements Runnable
     List<String> dests = parser.parse(pageData);
 
     dests.forEach(dest -> {
-      firstDegreeTable.put(src, dest);
+      List<String> destList = firstDegreeTable.get(src);
+
+      if (destList == null) {
+        destList = Collections.synchronizedList(new ArrayList<>());
+      }
+
+      destList.add(dest);
+      firstDegreeTable.put(src, destList);
 
       // There is a chance that two workers will encounter the same destination twice. In this case the same
       // destination will be added to the queue twice and the work will be duplicated. We are okay with that
